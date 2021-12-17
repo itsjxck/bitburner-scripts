@@ -34,7 +34,7 @@ export async function main(_ns) {
   const files = await getFileList(commitSha);
   for (const file of files) {
     await ns.wget(
-      `${rawBase}/${repo}/main/${file.path}`,
+      `${rawBase}/${repo}/main/${file.path}?ts=${new Date().getTime()}`,
       `/${repo}/${file.path}`
     );
   }
