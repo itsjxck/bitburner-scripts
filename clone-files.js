@@ -30,7 +30,7 @@ const getFileList = async (sha) => {
 export async function main(_ns) {
   ns = _ns;
   const commitSha = await getCommitSha();
-  const commitMessage = await getCommitMessage(sha);
+  const commitMessage = await getCommitMessage(commitSha);
   const files = await getFileList(commitSha);
   for (const file of files) {
     await ns.wget(
