@@ -23,7 +23,10 @@ const getFileList = async (sha) => {
 /** @param { NS } _ns  */
 export async function main(_ns) {
   ns = _ns;
-  const { sha, message } = await getCommit();
+  const {
+    sha,
+    commit: { message },
+  } = await getCommit();
   const files = await getFileList(sha);
   for (const file of files) {
     await ns.wget(
