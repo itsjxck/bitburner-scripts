@@ -17,6 +17,8 @@ const getFileList = async (sha) => {
   const res = await fetch(`${apiBase}/${repo}/git/trees/${sha}?recursive=1`);
   const json = await res.json();
 
+  ns.print(JSON.stringify(json));
+
   return json.tree.filter((f) => f.type === "blob" && f.path.endsWith(".js"));
 };
 
