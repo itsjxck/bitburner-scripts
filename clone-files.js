@@ -1,25 +1,30 @@
-/** @type NS */
 /** @typedef { import("Bitburner").BitBurner } NS */
+/** @type NS */
+let ns = null;
 
 const apiBase = "https://api.github.com/repos";
 const rawBase = "https://raw.githubusercontent.com";
 const repo = "itsjxck/bitburner-scripts";
 
-const getCommitSha = async () =>
-  (await (await fetch(`${apiBase}/${repo}/branches/main`)).json()).commit.sha;
+const getCommitSha = async () => {
+  const res = await fetch(`${apiBase}/${repo}/branches/main`);
+  const json = await res.json();
 
-const getFileList = async () =>
-  (
-    await (
-      await fetch(
-        `${apiBase}/${repo}/git/tree/${await getCommitSha()}?recursive=1`
-      )
-    ).json()
-  ).tree.filter((f) => f.type === "blob" && f.path.endsWith(".js"));
+  return json.commit.sha;
+};
 
-/** @param { NS } ns  */
-export async function main(ns) {
-  const files = await getFileList();
+const getFileList = async (sha) => {
+  const res = await fetch(`${apiBase}/${repo}/git/trees/${sha}?recursive=1`);
+  const json = await res.json();
+
+  return json.tree.filter((f) => f.type === "blob" && f.path.endsWith(".js"));
+};
+
+/** @param { NS } _ns  */
+export async function main(_ns) {
+  ns = _ns;
+  const commitSha = await getCommitSha();
+  const files = await getFileList(commitSha);
   for (const file of files) {
     await ns.wget(
       `${rawBase}/${repo}/main/${file.path}`,
