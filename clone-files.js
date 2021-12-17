@@ -8,16 +8,10 @@ const rawBase = `https://raw.githubusercontent.com/${repo}`;
 
 const doFetch = async (url) => (await fetch(url)).json();
 
-const getCommitSha = async () => {
+const getCommit = async () => {
   const json = await doFetch(`${apiBase}/branches/main`);
 
-  return json.commit.sha;
-};
-
-const getCommitMessage = async (sha) => {
-  const json = await doFetch(`${apiBase}/commits/${sha}`);
-
-  return json.commit.message;
+  return json.commit;
 };
 
 const getFileList = async (sha) => {
@@ -29,14 +23,13 @@ const getFileList = async (sha) => {
 /** @param { NS } _ns  */
 export async function main(_ns) {
   ns = _ns;
-  const commitSha = await getCommitSha();
-  const commitMessage = await getCommitMessage(commitSha);
-  const files = await getFileList(commitSha);
+  const { sha, message } = await getCommit();
+  const files = await getFileList(sha);
   for (const file of files) {
     await ns.wget(
       `${rawBase}/main/${file.path}?ts=${new Date().getTime()}`,
       `/${repo}/${file.path}`
     );
   }
-  ns.tprint(`[${repo}]: ${commitSha} - ${commitMessage}`);
+  ns.tprint(`[${repo}]: ${sha} - ${message}`);
 }
