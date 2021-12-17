@@ -2,26 +2,26 @@
 /** @type NS */
 let ns = null;
 
-const apiBase = "https://api.github.com/repos";
-const rawBase = "https://raw.githubusercontent.com";
 const repo = "itsjxck/bitburner-scripts";
+const apiBase = `https://api.github.com/repos/${repo}`;
+const rawBase = `https://raw.githubusercontent.com/${repo}`;
 
 const doFetch = async (url) => (await fetch(url)).json();
 
 const getCommitSha = async () => {
-  const json = await doFetch(`${apiBase}/${repo}/branches/main`);
+  const json = await doFetch(`${apiBase}/branches/main`);
 
   return json.commit.sha;
 };
 
 const getCommitMessage = async (sha) => {
-  const json = await doFetch(`${apiBase}/${repo}/commits/${sha}`);
+  const json = await doFetch(`${apiBase}/commits/${sha}`);
 
   return json.commit.message;
 };
 
 const getFileList = async (sha) => {
-  const json = await doFetch(`${apiBase}/${repo}/git/trees/${sha}?recursive=1`);
+  const json = await doFetch(`${apiBase}/git/trees/${sha}?recursive=1`);
 
   return json.tree.filter((f) => f.type === "blob" && f.path.endsWith(".js"));
 };
@@ -34,7 +34,7 @@ export async function main(_ns) {
   const files = await getFileList(commitSha);
   for (const file of files) {
     await ns.wget(
-      `${rawBase}/${repo}/main/${file.path}?ts=${new Date().getTime()}`,
+      `${rawBase}/main/${file.path}?ts=${new Date().getTime()}`,
       `/${repo}/${file.path}`
     );
   }
