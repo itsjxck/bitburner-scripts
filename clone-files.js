@@ -31,4 +31,5 @@ export async function main(_ns) {
       `/${repo}/${file.path}`
     );
   }
+  ns.tprint(`Cloned ${repo} [${commitSha}]`);
 }
