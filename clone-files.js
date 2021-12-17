@@ -6,18 +6,22 @@ const apiBase = "https://api.github.com/repos";
 const rawBase = "https://raw.githubusercontent.com";
 const repo = "itsjxck/bitburner-scripts";
 
+const doFetch = async (url) => (await fetch(url)).json();
+
 const getCommitSha = async () => {
-  const res = await fetch(`${apiBase}/${repo}/branches/main`);
-  const json = await res.json();
+  const json = await doFetch(`${apiBase}/${repo}/branches/main`);
 
   return json.commit.sha;
 };
 
-const getFileList = async (sha) => {
-  const res = await fetch(`${apiBase}/${repo}/git/trees/${sha}?recursive=1`);
-  const json = await res.json();
+const getCommitMessage = async (sha) => {
+  const json = await doFetch(`${apiBase}/${repo}/commits/${sha}`);
 
-  ns.print(JSON.stringify(json));
+  return json.commit.message;
+};
+
+const getFileList = async (sha) => {
+  const json = await doFetch(`${apiBase}/${repo}/git/trees/${sha}?recursive=1`);
 
   return json.tree.filter((f) => f.type === "blob" && f.path.endsWith(".js"));
 };
@@ -26,6 +30,7 @@ const getFileList = async (sha) => {
 export async function main(_ns) {
   ns = _ns;
   const commitSha = await getCommitSha();
+  const commitMessage = await getCommitMessage(sha);
   const files = await getFileList(commitSha);
   for (const file of files) {
     await ns.wget(
@@ -33,5 +38,5 @@ export async function main(_ns) {
       `/${repo}/${file.path}`
     );
   }
-  ns.tprint(`Cloned ${repo} [${commitSha}]`);
+  ns.tprint(`[${repo}]: ${commitSha} - ${commitMessage}`);
 }
