@@ -98,33 +98,11 @@ const getThreadsForTenPercentHack = () =>
     ns.getServerMaxMoney(target) * hackAmountMultiplier
   );
 
-const primeServerWeaken = async () => {
-  let threadsStarted = 0;
-  const threadsNeeded = getThreadsToMinSecurity();
-  if (threadsNeeded < 10) return;
-  while (threadsStarted < threadsNeeded) {
-    for (const server of listAvailableServers()) {
-      let threads = getAvailableThreads(server);
-      if (threads + threadsStarted > threadsNeeded)
-        threads = threadsNeeded - threadsStarted;
-      if (threads === 0) continue;
-      try {
-        ns.exec(scriptFiles.weaken, server, threads, target);
-      } catch (e) {
-        continue;
-      }
-      threadsStarted += threads;
-      ns.print(`[${server}] Priming: ${threads} weaken threads`);
-    }
-  }
-  await ns.asleep(weakenTime);
-};
-
 const primeServerGrow = async () => {
   const growThreadsNeeded = getThreadsToMaxMoney();
   const growSecIncrease = growThreadsNeeded * SECURITY_MULTIPLIERS.grow;
   const weakenThreadsNeeded = Math.ceil(
-    growSecIncrease / SECURITY_MULTIPLIERS.weaken
+    getThreadsToMinSecurity() + growSecIncrease / SECURITY_MULTIPLIERS.weaken
   );
   const totalThreadsNeeded = growThreadsNeeded + weakenThreadsNeeded;
   if (totalThreadsNeeded < 10) return;
@@ -255,8 +233,6 @@ export async function main(_ns) {
 
   await ns.scp(Object.values(scriptFiles), target);
 
-  printGenericInfo();
-  await primeServerWeaken();
   printGenericInfo();
   await primeServerGrow();
   while (true) {
