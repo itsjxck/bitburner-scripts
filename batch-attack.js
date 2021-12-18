@@ -190,7 +190,7 @@ const batchAttack = async () => {
           growThreads = growThreadsNeeded - growThreadsStarted;
           threads -= growThreads;
         }
-        ns.exec(scriptFiles.grow, server, threads, target);
+        ns.exec(scriptFiles.grow, server, growThreads, target);
         growThreadsStarted += growThreads;
         if (threads === 0) continue;
       }
