@@ -1,3 +1,4 @@
+/// <reference path="./Bitburner.t.ts" />
 /** @typedef { import("Bitburner").BitBurner } NS */
 /** @type NS */
 let ns = null;

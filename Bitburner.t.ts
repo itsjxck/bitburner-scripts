@@ -3662,6 +3662,15 @@ declare module "Bitburner" {
     sleep(millis: number): Promise<void>;
 
     /**
+     * Suspends the script for n milliseconds. Doesn't block with concurrent calls.
+     *
+     * @ramCost 0 GB
+     * @param {number} millis Number of milliseconds to sleep.
+     * @returns {Promise<void>}
+     */
+    asleep(millis: number): Promise<void>;
+
+    /**
      * Prints a value or a variable to the script’s logs.
      *
      * @ramCost 0 GB
@@ -4035,14 +4044,17 @@ declare module "Bitburner" {
      * @example
      * ```js
      * //Copies hack-template.script from the current server to foodnstuff:
-     * scp("hack-template.script", "foodnstuff");
+     * await scp("hack-template.script", "foodnstuff");
      * ```
      * @ramCost 0.6 GB
      * @param {(string|string[])} files Filename or an array of filenames of script/literature files to copy.
      * @param {(string|number)} destination Host or IP of the destination server, which is the server to which the file will be copied.
-     * @returns {boolean} True if the script/literature file is successfully copied over and false otherwise. If the files argument is an array then this function will return true if at least one of the files in the array is successfully copied.
+     * @returns {Promise<boolean>} True if the script/literature file is successfully copied over and false otherwise. If the files argument is an array then this function will return true if at least one of the files in the array is successfully copied.
      */
-    scp(files: string | ReadonlyArray<string>, destination: Host): boolean;
+    scp(
+      files: string | ReadonlyArray<string>,
+      destination: Host
+    ): Promise<boolean>;
 
     /**
      * Copies a script or literature (.lit) file(s) to another server. The files argument can be either a string
@@ -4051,26 +4063,26 @@ declare module "Bitburner" {
      * @example
      * ```js
      * //Copies foo.lit from the helios server to the home computer:
-     * scp("foo.lit", "helios", "home");
+     * await scp("foo.lit", "helios", "home");
      * ```
      * @example
      * ```js
      * //Tries to copy three files from rothman-uni to home computer:
      * files = ["foo1.lit", "foo2.script", "foo3.script"];
-     * scp(files, "rothman-uni", "home");
+     * await scp(files, "rothman-uni", "home");
      * ```
      * @ramCost 0.6 GB
      * @param {(string|string[])} files Filename or an array of filenames of script/literature files to copy.
      * @param {(string|number)} source Host or IP of the source server, which is the server from which the file will be copied. This argument is optional and if it’s omitted the source will be the current server.
      * @param {(string|number)} destination Host or IP of the destination server, which is the server to which the file will be copied.
-     * @returns {boolean} True if the script/literature file is successfully copied over and false otherwise. If the files argument is an array then this function will return true if at least one of the files in the array is successfully copied.
+     * @returns {Promise<boolean>} True if the script/literature file is successfully copied over and false otherwise. If the files argument is an array then this function will return true if at least one of the files in the array is successfully copied.
      */
     scp(
       files: string | ReadonlyArray<string>,
       source: Host,
       // tslint:disable-next-line:unified-signatures
       destination: Host
-    ): boolean;
+    ): Promise<boolean>;
 
     /**
      * Returns an array with the filenames of all files on the specified server
@@ -4193,6 +4205,15 @@ declare module "Bitburner" {
     getServerMaxMoney(host: Host): number;
 
     /**
+     * Get the max RAM on a server.
+     *
+     * @ramCost 0.05 GB
+     * @param {string} host Host or IP of target server.
+     * @returns {number} Max RAM on a server.
+     */
+    getServerMaxRam(host: Host): number;
+
+    /**
      * Returns the server’s instrinsic “growth parameter”. This growth
      * parameter is a number between 1 and 100 that represents how
      * quickly the server’s money grows. This parameter affects the
@@ -4216,6 +4237,15 @@ declare module "Bitburner" {
      * @returns {number} Security level of the target server.
      */
     getServerSecurityLevel(host: Host): number;
+
+    /**
+     * Get the used RAM on a server.
+     *
+     * @ramCost 0.05 GB
+     * @param {string} host Host or IP of target server.
+     * @returns {number} Used RAM on a server.
+     */
+    getServerUsedRam(host: Host): number;
 
     /**
      * Returns the base security level of the target server. This is the security
