@@ -39,6 +39,33 @@ const listServers = () => {
   return list;
 };
 
+const printGenericInfo = () => {
+  ns.print(`****** ${target} ******`);
+  ns.print(
+    `Available Money: ${ns.nFormat(
+      ns.getServerMoneyAvailable(target),
+      "($0.00 a)"
+    )}`
+  );
+  ns.print(`Money target: ${ns.nFormat(targetMaxMoney, "($ 0.00 a)")}`);
+  ns.print(`Grow time: ${ns.nFormat(growTime / 1000, "0,0.00")}s`);
+  ns.print(
+    `Current Security Level: ${ns.nFormat(
+      ns.getServerSecurityLevel(target),
+      "0,0.00"
+    )}`
+  );
+  ns.print(
+    `Security Level Threshold: ${ns.nFormat(targetMinSecurity, "0,0.00")}`
+  );
+  ns.print(`Weaken time: ${ns.nFormat(weakenTime / 1000, "0,0.00")}s`);
+  ns.print(
+    `Hack Success Chance: ${ns.nFormat(ns.hackAnalyzeChance(target), "0.00%")}`
+  );
+  ns.print(`Hack time: ${ns.nFormat(hackTime / 1000, "0,0.00")}s`);
+  ns.print(`****** ${target} ******`);
+};
+
 const listAvailableServers = () =>
   listServers().filter((s) => ns.hasRootAccess(s) && ns.getServerMaxRam(s) > 0);
 
@@ -190,7 +217,12 @@ export async function main(_ns) {
 
   await ns.scp(Object.values(scriptFiles), target);
 
+  printGenericInfo();
   await primeServerWeaken();
+  printGenericInfo();
   await primeServerGrow();
-  await batchAttack();
+  while (true) {
+    printGenericInfo();
+    await batchAttack();
+  }
 }

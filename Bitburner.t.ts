@@ -3630,7 +3630,7 @@ declare module "Bitburner" {
      * @param {string} host IP or hostname of the target server.
      * @returns {number} The chance you have of successfully hacking the target server.
      */
-    hackChance(host: Host): number;
+    hackAnalyzeChance(host: Host): number;
 
     /**
      * This function returns the number of “growths” needed in order to increase
