@@ -56,7 +56,7 @@ const printGenericInfo = () => {
     )}`
   );
   ns.print(
-    `Security Level Threshold: ${ns.nFormat(targetMinSecurity, "0,0.00")}`
+    `Minimum security level: ${ns.nFormat(targetMinSecurity, "0,0.00")}`
   );
   ns.print(`Weaken time: ${ns.nFormat(weakenTime / 1000, "00:00:00")}`);
   ns.print(
@@ -86,7 +86,7 @@ const getThreadsToMaxMoney = () => {
 
 const getThreadsToMinSecurity = () =>
   Math.ceil(
-    (ns.getServerSecurityLevel(target) - targetMinSecurity) *
+    (ns.getServerSecurityLevel(target) - targetMinSecurity) /
       SECURITY_MULTIPLIERS.weaken
   );
 
@@ -118,7 +118,7 @@ const primeServerGrow = async () => {
   const growThreadsNeeded = getThreadsToMaxMoney();
   const growSecIncrease = growThreadsNeeded * SECURITY_MULTIPLIERS.grow;
   const weakenThreadsNeeded = Math.ceil(
-    growSecIncrease * SECURITY_MULTIPLIERS.weaken
+    growSecIncrease / SECURITY_MULTIPLIERS.weaken
   );
   const totalThreadsNeeded = growThreadsNeeded + weakenThreadsNeeded;
   if (totalThreadsNeeded === 0) return;
@@ -164,7 +164,9 @@ const batchAttack = async () => {
   const securityIncrease =
     hackThreadsNeeded * SECURITY_MULTIPLIERS.hack +
     growThreadsNeeded * SECURITY_MULTIPLIERS.grow;
-  const weakenThreadsNeeded = Math.ceil(securityIncrease * 0.05);
+  const weakenThreadsNeeded = Math.ceil(
+    securityIncrease / SECURITY_MULTIPLIERS.weaken
+  );
   const totalThreadsNeeded = growThreadsNeeded + weakenThreadsNeeded;
 
   let hackThreadsStarted = 0;
