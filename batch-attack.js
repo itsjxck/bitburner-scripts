@@ -195,9 +195,9 @@ const batchAttack = async () => {
         if (threads === 0) continue;
       }
 
-      if (weakenThreadsStarted + weakenThreads > weakenThreadsNeeded)
+      if (weakenThreadsStarted + threads > weakenThreadsNeeded)
         threads = weakenThreadsNeeded - weakenThreadsStarted;
-      ns.exec(scriptFiles.weaken, server, weakenThreads, target);
+      ns.exec(scriptFiles.weaken, server, threads, target);
       weakenThreadsStarted += threads;
     }
   }
