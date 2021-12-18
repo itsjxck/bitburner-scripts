@@ -238,6 +238,9 @@ export async function main(_ns) {
   printGenericInfo();
   await primeServerGrow();
   while (true) {
+    hackTime = ns.getHackTime(target);
+    weakenTime = hackTime * 4;
+    growTime = hackTime * 3.2;
     printGenericInfo();
     await batchAttack();
   }
