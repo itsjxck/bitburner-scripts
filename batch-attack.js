@@ -152,17 +152,19 @@ const primeServerGrow = async () => {
 };
 
 const batchAttack = async () => {
-  const hackThreadsNeeded = getThreadsForTenPercentHack();
-  const growThreadsNeeded = ns.growthAnalyze(
-    target,
-    1 +
-      (targetMaxMoney - targetMaxMoney * (1 - hackAmountMultiplier)) /
-        (targetMaxMoney * (1 - hackAmountMultiplier))
+  const hackThreadsNeeded = Math.ceil(getThreadsForTenPercentHack());
+  const growThreadsNeeded = Math.ceil(
+    ns.growthAnalyze(
+      target,
+      1 +
+        (targetMaxMoney - targetMaxMoney * (1 - hackAmountMultiplier)) /
+          (targetMaxMoney * (1 - hackAmountMultiplier))
+    )
   );
   const securityIncrease =
     hackThreadsNeeded * SECURITY_MULTIPLIERS.hack +
     growThreadsNeeded * SECURITY_MULTIPLIERS.grow;
-  const weakenThreadsNeeded = securityIncrease * 0.05;
+  const weakenThreadsNeeded = Math.ceil(securityIncrease * 0.05);
   const totalThreadsNeeded = growThreadsNeeded + weakenThreadsNeeded;
 
   let hackThreadsStarted = 0;
@@ -212,6 +214,7 @@ export async function main(_ns) {
   ns = _ns;
 
   ns.disableLog("ALL");
+  ns.enableLog("exec");
 
   target = ns.args[0];
 
