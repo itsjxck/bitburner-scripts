@@ -9,14 +9,13 @@ const SECURITY_MULTIPLIERS = {
   hack: 0.002,
 };
 
-const hackAmountMultiplier = 0.1;
-
 const scriptFiles = {
   grow: "/leaching/grow.js",
   weaken: "/leaching/weaken.js",
   hack: "/leaching/hack.js",
 };
 
+let hackAmountMultiplier = null;
 let target = null;
 let targetMinSecurity = null;
 let targetMaxMoney = null;
@@ -222,6 +221,7 @@ export async function main(_ns) {
   // ns.enableLog("exec");
 
   target = ns.args[0];
+  hackAmountMultiplier = ns.args[1] ?? 0.25;
 
   if (!target) throw new Error("No target");
 
