@@ -48,7 +48,7 @@ const printGenericInfo = () => {
     )}`
   );
   ns.print(`Money target: ${ns.nFormat(targetMaxMoney, "($ 0.00 a)")}`);
-  ns.print(`Grow time: ${ns.nFormat(growTime / 1000, "0,0.00")}s`);
+  ns.print(`Grow time: ${ns.nFormat(growTime / 1000, "00:00:00")}`);
   ns.print(
     `Current Security Level: ${ns.nFormat(
       ns.getServerSecurityLevel(target),
@@ -58,11 +58,11 @@ const printGenericInfo = () => {
   ns.print(
     `Security Level Threshold: ${ns.nFormat(targetMinSecurity, "0,0.00")}`
   );
-  ns.print(`Weaken time: ${ns.nFormat(weakenTime / 1000, "0,0.00")}s`);
+  ns.print(`Weaken time: ${ns.nFormat(weakenTime / 1000, "00:00:00")}`);
   ns.print(
     `Hack Success Chance: ${ns.nFormat(ns.hackAnalyzeChance(target), "0.00%")}`
   );
-  ns.print(`Hack time: ${ns.nFormat(hackTime / 1000, "0,0.00")}s`);
+  ns.print(`Hack time: ${ns.nFormat(hackTime / 1000, "00:00:00")}`);
   ns.print(`****** ${target} ******`);
 };
 
@@ -140,9 +140,9 @@ const primeServerGrow = async () => {
         if (threads === 0) continue;
       }
 
-      if (weakenThreadsStarted + weakenThreads > weakenThreadsNeeded)
+      if (weakenThreadsStarted + threads > weakenThreadsNeeded)
         threads = weakenThreadsNeeded - weakenThreadsStarted;
-      ns.exec(scriptFiles.weaken, server, weakenThreads, target);
+      ns.exec(scriptFiles.weaken, server, threads, target);
       weakenThreadsStarted += threads;
     }
   }
@@ -197,6 +197,7 @@ const batchAttack = async () => {
 
       if (weakenThreadsStarted + threads > weakenThreadsNeeded)
         threads = weakenThreadsNeeded - weakenThreadsStarted;
+      if (threads === 0) continue;
       ns.exec(scriptFiles.weaken, server, threads, target);
       weakenThreadsStarted += threads;
     }
