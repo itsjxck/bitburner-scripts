@@ -72,7 +72,7 @@ const listAvailableServers = () =>
 const getAvailableRam = (s) => ns.getServerMaxRam(s) - ns.getServerUsedRam(s);
 
 const getAvailableThreads = (s, ramCost = 1.75) =>
-  Math.ceil(getAvailableRam(s) / ramCost);
+  Math.floor(getAvailableRam(s) / ramCost);
 
 const getAllAvailableThreads = (ramCost = 1.75) =>
   listAvailableServers()
@@ -106,7 +106,11 @@ const primeServerWeaken = async () => {
       if (threads + threadsStarted > threadsNeeded)
         threads = threadsNeeded - threadsStarted;
       if (threads === 0) continue;
-      ns.exec(scriptFiles.weaken, server, threads, target);
+      try {
+        ns.exec(scriptFiles.weaken, server, threads, target);
+      } catch (e) {
+        continue;
+      }
       threadsStarted += threads;
       ns.print(`[${server}] Priming: ${threads} weaken threads`);
     }
@@ -134,7 +138,11 @@ const primeServerGrow = async () => {
         if (growThreadsStarted + threads > growThreadsNeeded)
           growThreads = growThreadsNeeded - growThreadsStarted;
         if (threads === 0) continue;
-        ns.exec(scriptFiles.grow, server, threads, target);
+        try {
+          ns.exec(scriptFiles.grow, server, threads, target);
+        } catch (e) {
+          continue;
+        }
         growThreadsStarted += growThreads;
         threads -= growThreads;
         ns.print(`[${server}] Priming: ${growThreads} grow threads`);
@@ -143,7 +151,11 @@ const primeServerGrow = async () => {
       if (weakenThreadsStarted + threads > weakenThreadsNeeded)
         threads = weakenThreadsNeeded - weakenThreadsStarted;
       if (threads === 0) continue;
-      ns.exec(scriptFiles.weaken, server, threads, target);
+      try {
+        ns.exec(scriptFiles.weaken, server, threads, target);
+      } catch (e) {
+        continue;
+      }
       weakenThreadsStarted += threads;
       ns.print(`[${server}] Priming: ${threads} weaken threads`);
     }
@@ -182,7 +194,11 @@ const batchAttack = async () => {
         if (hackThreadsStarted + threads > hackThreadsNeeded)
           threads = hackThreadsNeeded - hackThreadsStarted;
         if (threads === 0) continue;
-        ns.exec(scriptFiles.hack, server, threads, target);
+        try {
+          ns.exec(scriptFiles.hack, server, threads, target);
+        } catch (e) {
+          continue;
+        }
         hackThreadsStarted += threads;
         ns.print(`[${server}] Hacking: ${threads} hack threads`);
       }
@@ -194,7 +210,11 @@ const batchAttack = async () => {
         let growThreads = threads;
         if (growThreadsStarted + growThreads > growThreadsNeeded)
           growThreads = growThreadsNeeded - growThreadsStarted;
-        ns.exec(scriptFiles.grow, server, growThreads, target);
+        try {
+          ns.exec(scriptFiles.grow, server, growThreads, target);
+        } catch (e) {
+          continue;
+        }
         growThreadsStarted += growThreads;
         threads -= growThreads;
         ns.print(`[${server}] Hacking: ${growThreads} grow threads`);
@@ -202,8 +222,11 @@ const batchAttack = async () => {
 
       if (weakenThreadsStarted + threads > weakenThreadsNeeded)
         threads = weakenThreadsNeeded - weakenThreadsStarted;
-      if (threads === 0) continue;
-      ns.exec(scriptFiles.weaken, server, threads, target);
+      try {
+        ns.exec(scriptFiles.weaken, server, threads, target);
+      } catch (e) {
+        continue;
+      }
       weakenThreadsStarted += threads;
       ns.print(`[${server}] Hacking: ${threads} weaken threads`);
     }
