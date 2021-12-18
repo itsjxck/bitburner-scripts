@@ -3653,6 +3653,25 @@ declare module "Bitburner" {
     growthAnalyze(host: Host, growthAmount: number): number;
 
     /**
+     * Calculate the security increase for a number of thread.
+     *
+     * @ramCost 1 GB
+     * @param {number} threads Amount of threads that will be used.
+     * @returns {number} The security increase that would occur if a grow with this many threads happened.
+     */
+    growthAnalyzeSecurity(threads: number): number;
+
+    /**
+     * Predict the effect of weaken.
+     *
+     * @ramCost 1 GB
+     * @param {number} threads Amount of threads that will be used.
+     * @param {number} cores Optional. The number of cores of the server that would run weaken.
+     * @returns {number} The security decrease that would occur if a weaken with this many threads happened.
+     */
+    weakenAnalyze(threads: number, cores?: number): number;
+
+    /**
      * Suspends the script for n milliseconds.
      *
      * @ramCost 0 GB

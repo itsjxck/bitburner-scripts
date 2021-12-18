@@ -19,9 +19,6 @@ let hackAmountMultiplier = null;
 let target = null;
 let targetMinSecurity = null;
 let targetMaxMoney = null;
-let hackTime = null;
-let weakenTime = null;
-let growTime = null;
 
 const scan = (parent, host, list) => {
   const children = ns.scan(host, true);
@@ -38,7 +35,7 @@ const listServers = () => {
   return list;
 };
 
-const printGenericInfo = () => {
+const printGenericInfo = (hackTime, weakenTime, growTime) => {
   ns.print(`****** ${target} ******`);
   ns.print(
     `Available Money: ${ns.nFormat(
@@ -93,18 +90,20 @@ const getThreadsToMinSecurity = () =>
 
 const getThreadsForHack = () =>
   Math.ceil(
-    ns.hackAnalyzeThreads(
-      target,
-      ns.getServerMaxMoney(target) * hackAmountMultiplier
-    )
+    ns.hackAnalyzeThreads(target, targetMaxMoney * hackAmountMultiplier)
   );
 
-const primeServerGrow = async () => {
+const primeServer = async () => {
+  const hackTime = ns.getHackTime(target);
+  const weakenTime = hackTime * 4;
+  const growTime = hackTime * 3.2;
+  printGenericInfo(hackTime, weakenTime, growTime);
+
   const growThreadsNeeded = getThreadsToMaxMoney();
   const growSecIncrease = growThreadsNeeded * SECURITY_MULTIPLIERS.grow;
-  const weakenThreadsNeeded = Math.ceil(
-    getThreadsToMinSecurity() + growSecIncrease / SECURITY_MULTIPLIERS.weaken
-  );
+  const weakenThreadsNeeded =
+    getThreadsToMinSecurity() +
+    Math.ceil(growSecIncrease / SECURITY_MULTIPLIERS.weaken);
   const totalThreadsNeeded = growThreadsNeeded + weakenThreadsNeeded;
   if (totalThreadsNeeded < 10) return;
 
@@ -141,14 +140,14 @@ const primeServerGrow = async () => {
   }
   ns.print(`[Priming] ${growThreadsStarted} grow threads`);
   ns.print(`[Priming] ${weakenThreadsStarted} weaken threads`);
-  await ns.asleep(weakenTime);
+  await ns.asleep(weakenTime + 100);
 };
 
 const batchAttack = async () => {
-  hackTime = ns.getHackTime(target);
-  weakenTime = hackTime * 4;
-  growTime = hackTime * 3.2;
-  printGenericInfo();
+  const hackTime = ns.getHackTime(target);
+  const weakenTime = hackTime * 4;
+  const growTime = hackTime * 3.2;
+  printGenericInfo(hackTime, weakenTime, growTime);
 
   const hackThreadsNeeded = Math.ceil(getThreadsForHack());
   const growThreadsNeeded = Math.ceil(
@@ -236,14 +235,11 @@ export async function main(_ns) {
 
   targetMinSecurity = ns.getServerMinSecurityLevel(target);
   targetMaxMoney = ns.getServerMaxMoney(target);
-  hackTime = ns.getHackTime(target);
-  weakenTime = hackTime * 4;
-  growTime = hackTime * 3.2;
 
   await ns.scp(Object.values(scriptFiles), target);
 
-  printGenericInfo();
-  await primeServerGrow();
+  await primeServer();
+
   while (true) {
     await batchAttack();
   }
