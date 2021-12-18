@@ -124,7 +124,6 @@ const primeServerGrow = async () => {
         }
         growThreadsStarted += growThreads;
         threads -= growThreads;
-        ns.print(`[${server}] Priming: ${growThreads} grow threads`);
       }
 
       if (weakenThreadsStarted + threads > weakenThreadsNeeded)
@@ -136,9 +135,10 @@ const primeServerGrow = async () => {
         continue;
       }
       weakenThreadsStarted += threads;
-      ns.print(`[${server}] Priming: ${threads} weaken threads`);
     }
   }
+  ns.print(`[Priming] ${growThreadsStarted} grow threads`);
+  ns.print(`[Priming] ${weakenThreadsStarted} weaken threads`);
   await ns.asleep(weakenTime);
 };
 
@@ -181,7 +181,6 @@ const batchAttack = async () => {
           continue;
         }
         hackThreadsStarted += threads;
-        ns.print(`[${server}] Hacking: ${threads} hack threads`);
       }
 
       let threads = getAvailableThreads(server);
@@ -198,7 +197,6 @@ const batchAttack = async () => {
         }
         growThreadsStarted += growThreads;
         threads -= growThreads;
-        ns.print(`[${server}] Hacking: ${growThreads} grow threads`);
       }
 
       if (weakenThreadsStarted + threads > weakenThreadsNeeded)
@@ -209,9 +207,11 @@ const batchAttack = async () => {
         continue;
       }
       weakenThreadsStarted += threads;
-      ns.print(`[${server}] Hacking: ${threads} weaken threads`);
     }
   }
+  ns.print(`[Hacking] ${hackThreadsStarted} hack threads`);
+  ns.print(`[Hacking] ${growThreadsStarted} grow threads`);
+  ns.print(`[Hacking] ${weakenThreadsStarted} weaken threads`);
   await ns.asleep(weakenTime);
 };
 
