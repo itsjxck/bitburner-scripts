@@ -241,7 +241,7 @@ export async function main(_ns) {
   ns = _ns;
 
   ns.disableLog("ALL");
-  ns.enableLog("exec");
+  // ns.enableLog("exec");
 
   target = ns.args[0];
 
