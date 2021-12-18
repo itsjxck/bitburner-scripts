@@ -208,6 +208,8 @@ const batchAttack = async () => {
 export async function main(_ns) {
   ns = _ns;
 
+  ns.disableLog("ALL");
+
   target = ns.args[0];
 
   if (!target) throw new Error("No target");
