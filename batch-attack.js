@@ -99,6 +99,7 @@ const getThreadsForTenPercentHack = () =>
 const primeServerWeaken = async () => {
   let threadsStarted = 0;
   const threadsNeeded = getThreadsToMinSecurity();
+  if (threadsNeeded === 0) return;
   while (threadsStarted < threadsNeeded) {
     for (const server of listAvailableServers()) {
       let threads = getAvailableThreads(server);
@@ -119,6 +120,8 @@ const primeServerGrow = async () => {
     growSecIncrease * SECURITY_MULTIPLIERS.weaken
   );
   const totalThreadsNeeded = growThreadsNeeded + weakenThreadsNeeded;
+  if (totalThreadsNeeded === 0) return;
+
   let growThreadsStarted = 0;
   let weakenThreadsStarted = 0;
   while (growThreadsStarted + weakenThreadsStarted < totalThreadsNeeded) {
