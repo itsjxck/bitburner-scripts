@@ -166,9 +166,16 @@ const batchAttack = async () => {
   const securityIncrease =
     hackThreadsNeeded * SECURITY_MULTIPLIERS.hack +
     growThreadsNeeded * SECURITY_MULTIPLIERS.grow;
+
+  const weakenThreadsToCounter = Math.ceil(
+    securityIncrease / SECURITY_MULTIPLIERS.weaken
+  );
+
+  ns.print(`Weaken threads from current: ${getThreadsToMinSecurity()}`);
+  ns.print(`Weaken threads to counter: ${weakenThreadsToCounter}`);
+
   const weakenThreadsNeeded =
-    getThreadsToMinSecurity() +
-    Math.ceil(securityIncrease / SECURITY_MULTIPLIERS.weaken);
+    getThreadsToMinSecurity() + weakenThreadsToCounter;
   const totalThreadsNeeded = growThreadsNeeded + weakenThreadsNeeded;
   const batches = Math.floor(getAllAvailableThreads() / totalThreadsNeeded);
   ns.print(`BATCHES: ${batches}`);
