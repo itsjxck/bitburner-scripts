@@ -81,7 +81,9 @@ const getAllAvailableThreads = (ramCost = 1.75) =>
 
 const getThreadsToMaxMoney = () => {
   const available = ns.getServerMoneyAvailable(target);
-  return ns.growthAnalyze(target, 1 + (targetMaxMoney - available) / available);
+  return Math.ceil(
+    ns.growthAnalyze(target, 1 + (targetMaxMoney - available) / available)
+  );
 };
 
 const getThreadsToMinSecurity = () =>
