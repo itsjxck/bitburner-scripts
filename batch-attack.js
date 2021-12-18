@@ -149,6 +149,13 @@ const batchAttack = async () => {
 
   const hackThreadsNeeded = getThreadsForHack();
   const hackMaxSteal = ns.hackAnalyze(target) * hackThreadsNeeded;
+  ns.print(`Max steal: ${hackMaxSteal}`);
+  ns.print(`Threads (available): ${getThreadsToMaxMoney()}`);
+  ns.print(
+    `Threads (after steal): ${getThreadsToMaxMoney(
+      targetMaxMoney - hackMaxSteal
+    )}`
+  );
   const growThreadsNeeded =
     getThreadsToMaxMoney() +
     getThreadsToMaxMoney(targetMaxMoney - hackMaxSteal);
