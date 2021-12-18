@@ -75,12 +75,10 @@ const getAllAvailableThreads = (ramCost = 1.75) =>
     .map((s) => getAvailableThreads(s, ramCost))
     .reduce((a, b) => a + b, 0);
 
-const getThreadsToMaxMoney = () => {
-  const available = ns.getServerMoneyAvailable(target);
-  return Math.ceil(
+const getThreadsToMaxMoney = (available = ns.getServerMoneyAvailable(target)) =>
+  Math.ceil(
     ns.growthAnalyze(target, 1 + (targetMaxMoney - available) / available)
   );
-};
 
 const getThreadsToMinSecurity = () =>
   Math.ceil(
@@ -140,7 +138,7 @@ const primeServer = async () => {
   }
   ns.print(`[Priming] ${growThreadsStarted} grow threads`);
   ns.print(`[Priming] ${weakenThreadsStarted} weaken threads`);
-  await ns.asleep(weakenTime + 100);
+  await ns.sleep(weakenTime);
 };
 
 const batchAttack = async () => {
@@ -149,21 +147,17 @@ const batchAttack = async () => {
   const growTime = hackTime * 3.2;
   printGenericInfo(hackTime, weakenTime, growTime);
 
-  const hackThreadsNeeded = Math.ceil(getThreadsForHack());
-  const growThreadsNeeded = Math.ceil(
-    ns.growthAnalyze(
-      target,
-      1 +
-        (targetMaxMoney - targetMaxMoney * (1 - hackAmountMultiplier)) /
-          (targetMaxMoney * (1 - hackAmountMultiplier))
-    )
-  );
+  const hackThreadsNeeded = getThreadsForHack();
+  const hackMaxSteal = ns.hackAnalyze(target) * hackThreadsNeeded;
+  const growThreadsNeeded =
+    getThreadsToMaxMoney() +
+    getThreadsToMaxMoney(targetMaxMoney - hackMaxSteal);
   const securityIncrease =
     hackThreadsNeeded * SECURITY_MULTIPLIERS.hack +
     growThreadsNeeded * SECURITY_MULTIPLIERS.grow;
-  const weakenThreadsNeeded = Math.ceil(
-    securityIncrease / SECURITY_MULTIPLIERS.weaken
-  );
+  const weakenThreadsNeeded =
+    getThreadsToMinSecurity() +
+    Math.ceil(securityIncrease / SECURITY_MULTIPLIERS.weaken);
   const totalThreadsNeeded = growThreadsNeeded + weakenThreadsNeeded;
   const batches = Math.floor(getAllAvailableThreads() / totalThreadsNeeded);
   ns.print(`BATCHES: ${batches}`);
@@ -218,7 +212,7 @@ const batchAttack = async () => {
   ns.print(`[Hacking] ${hackThreadsStarted} hack threads`);
   ns.print(`[Hacking] ${growThreadsStarted} grow threads`);
   ns.print(`[Hacking] ${weakenThreadsStarted} weaken threads`);
-  await ns.asleep(weakenTime);
+  await ns.sleep(weakenTime);
 };
 
 /** @param { NS } _ns  */
