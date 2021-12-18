@@ -139,6 +139,7 @@ const primeServer = async () => {
   ns.print(`[Priming] ${growThreadsStarted} grow threads`);
   ns.print(`[Priming] ${weakenThreadsStarted} weaken threads`);
   await ns.asleep(weakenTime);
+  ns.print(`[Priming]: Complete`);
 };
 
 const batchAttack = async () => {
@@ -220,6 +221,7 @@ const batchAttack = async () => {
   ns.print(`[Hacking] ${growThreadsStarted} grow threads`);
   ns.print(`[Hacking] ${weakenThreadsStarted} weaken threads`);
   await ns.asleep(weakenTime);
+  ns.print(`[Hacking]: Complete`);
 };
 
 /** @param { NS } _ns  */
