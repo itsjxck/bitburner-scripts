@@ -44,7 +44,6 @@ const printGenericInfo = (hackTime, weakenTime, growTime) => {
     )}`
   );
   ns.print(`Money target: ${ns.nFormat(targetMaxMoney, "($ 0.00 a)")}`);
-  ns.print(`Grow time: ${ns.nFormat(growTime / 1000, "00:00:00")}`);
   ns.print(
     `Current Security Level: ${ns.nFormat(
       ns.getServerSecurityLevel(target),
@@ -54,11 +53,12 @@ const printGenericInfo = (hackTime, weakenTime, growTime) => {
   ns.print(
     `Minimum security level: ${ns.nFormat(targetMinSecurity, "0,0.00")}`
   );
-  ns.print(`Weaken time: ${ns.nFormat(weakenTime / 1000, "00:00:00")}`);
   ns.print(
     `Hack Success Chance: ${ns.nFormat(ns.hackAnalyzeChance(target), "0.00%")}`
   );
   ns.print(`Hack time: ${ns.nFormat(hackTime / 1000, "00:00:00")}`);
+  ns.print(`Grow time: ${ns.nFormat(growTime / 1000, "00:00:00")}`);
+  ns.print(`Weaken time: ${ns.nFormat(weakenTime / 1000, "00:00:00")}`);
   ns.print(`****** ${target} ******`);
 };
 
@@ -151,13 +151,15 @@ const batchAttack = async () => {
   const hackThreadsNeeded = getThreadsForHack();
   const hackMaxSteal =
     targetMaxMoney * (ns.hackAnalyze(target) * hackThreadsNeeded);
-  ns.print(`Max steal: ${hackMaxSteal}`);
-  ns.print(`Threads (available): ${getThreadsToMaxMoney()}`);
+
+  ns.print(`Max steal: ${ns.nFormat(hackMaxSteal, "($0.00 a)")}`);
+  ns.print(`Grow threads from available: ${getThreadsToMaxMoney()}`);
   ns.print(
-    `Threads (after steal): ${getThreadsToMaxMoney(
+    `Grow threads to counter hack: ${getThreadsToMaxMoney(
       targetMaxMoney - hackMaxSteal
     )}`
   );
+
   const growThreadsNeeded =
     getThreadsToMaxMoney() +
     getThreadsToMaxMoney(targetMaxMoney - hackMaxSteal);
