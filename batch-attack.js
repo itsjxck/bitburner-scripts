@@ -149,7 +149,8 @@ const batchAttack = async () => {
   printGenericInfo(hackTime, weakenTime, growTime);
 
   const hackThreadsNeeded = getThreadsForHack();
-  const hackMaxSteal = ns.hackAnalyze(target) * hackThreadsNeeded;
+  const hackMaxSteal =
+    targetMaxMoney * (ns.hackAnalyze(target) * hackThreadsNeeded);
   ns.print(`Max steal: ${hackMaxSteal}`);
   ns.print(`Threads (available): ${getThreadsToMaxMoney()}`);
   ns.print(
