@@ -1,5 +1,8 @@
 /// <reference path="./Bitburner.t.ts" />
 /** @typedef { import("Bitburner").BitBurner } NS */
+
+import { setTimeout } from "timers/promises";
+
 /** @type NS */
 let ns = null;
 
@@ -19,21 +22,6 @@ let hackAmountMultiplier = null;
 let target = null;
 let targetMinSecurity = null;
 let targetMaxMoney = null;
-
-const scan = (parent, host, list) => {
-  const children = ns.scan(host, true);
-  for (const child of children) {
-    if (parent === child) continue;
-    list.push(child);
-    scan(host, child, list);
-  }
-};
-
-const listServers = () => {
-  const list = [];
-  scan("", ns.getHostname(), list);
-  return list;
-};
 
 const printGenericInfo = (hackTime, weakenTime, growTime) => {
   ns.print(`****** ${target} ******`);
@@ -62,8 +50,35 @@ const printGenericInfo = (hackTime, weakenTime, growTime) => {
   ns.print(`****** ${target} ******`);
 };
 
+const sleep = async (millis) => setTimeout(millis, true);
+
+const scan = (parent, host, list) => {
+  const children = ns.scan(host, true);
+  for (const child of children) {
+    if (parent === child) continue;
+    list.push(child);
+    scan(host, child, list);
+  }
+};
+
+const listServers = () => {
+  const list = [];
+  scan("", ns.getHostname(), list);
+  return list;
+};
+
 const listAvailableServers = () =>
   listServers().filter((s) => ns.hasRootAccess(s) && ns.getServerMaxRam(s) > 0);
+
+const waitForCycleToFinish = async () => {
+  while (true) {
+    const isRunning = listAvailableServers().map((s) =>
+      ns.isRunning(scriptFiles.weaken, s, target)
+    );
+    if (!isRunning.includes(true)) return;
+    await sleep(500);
+  }
+};
 
 const getAvailableRam = (s) => ns.getServerMaxRam(s) - ns.getServerUsedRam(s);
 
@@ -138,7 +153,7 @@ const primeServer = async () => {
   }
   ns.print(`[Priming] ${growThreadsStarted} grow threads`);
   ns.print(`[Priming] ${weakenThreadsStarted} weaken threads`);
-  await ns.asleep(weakenTime);
+  await waitForCycleToFinish();
   ns.print(`[Priming]: Complete`);
 };
 
@@ -230,7 +245,7 @@ const batchAttack = async () => {
   ns.print(`[Hacking] ${hackThreadsStarted} hack threads`);
   ns.print(`[Hacking] ${growThreadsStarted} grow threads`);
   ns.print(`[Hacking] ${weakenThreadsStarted} weaken threads`);
-  await ns.asleep(weakenTime);
+  await waitForCycleToFinish();
   ns.print(`[Hacking]: Complete`);
 };
 
